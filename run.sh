@@ -2,11 +2,11 @@
 
 BLAST_TEMP_PATH='/home7/ereister/Bioinformatics_Spring2016/blast_results'
 OUTPUT_PATH='/home7/ereister/Bioinformatics_Spring2016/pipeline_results'
-INPUT_FILE='/home7/ereister/Bioinformatics_Spring2016/raw_data/test.txt'
+INPUT_FILE='/home7/ereister/Bioinformatics_Spring2016/raw_data/test.txt.1'
 CLUSTER_SIZE=23
 CM='/home7/ereister/Bioinformatics_Spring2016/motifs/motif_files/riboswitch/cmdatabase/riboswitch_cmdatabase.cm'
 
-#python blast_pipeline.py $BLAST_TEMP_PATH $OUTPUT_PATH $CLUSTER_SIZE < $INPUT_FILE
+python blast_pipeline.py $BLAST_TEMP_PATH $OUTPUT_PATH $CLUSTER_SIZE < $INPUT_FILE
 
 module load CMfinder
 module load infernal/1.1.1
@@ -122,31 +122,34 @@ for file in $OUTPUT_PATH/*
 do
     for x in $file/*.2.*motif*
     do
-        cat $x >> $file/unclustered2.combined_motifs.sto
+        cat $x >> $file/unclustered.combined_motifs.sto
     done
 done
 
 
 ##Run stockholm files into cmscan
 
-#cd $OUTPUT_PATH 
-#for file in **/**.sto
-#do
-#    cmscan --tblout $file.cmsc_out.txt $CM $file
-#done
+cd $OUTPUT_PATH 
+for file in **/**.sto
+do
+    cmscan --tblout $file.cmsc_out.txt $CM $file
+done
 
 ##Remove all leftover  cm files
 
-#cd $OUTPUT_PATH
-#for file in **/*cm*
-#do
-#    rm $file
-#done
+cd $OUTPUT_PATH
+for file in **/*cm.*
+do
+    rm $file
+done
 
-#cd $OUTPUT_PATH
-#for file in **/*.h*
-#do
-#    rm $file
-#done
+##Remove all motif files from CMfinder
+cd $OUTPUT_PATH
+for file in **/*.motif.*
+do
+    rm $file
+done
 
-#find ./* -type f -empty
+##Remove All Empty Files
+
+find ./* -type f -size 0 -delete
